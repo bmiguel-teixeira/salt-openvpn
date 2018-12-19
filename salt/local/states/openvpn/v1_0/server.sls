@@ -1,8 +1,27 @@
+include:
+  - openvpn.v1_0.certificates
+  - openvpn.v1_0.acl
+
+epel.repo:
+  pkg.installed:
+    - name: epel-release
+    - refresh: True
+
 openvpn.server:
-    pkgrepo.managed:
-      - humanname: CentOS-$releasever - Base
-      - mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
-      - comments:
-        - 'http://mirror.centos.org/centos/$releasever/os/$basearch/'
-      - gpgcheck: 1
-      - gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+  pkg.installed:
+    - name: openvpn
+    - version: 2.4.6-1.el7
+    - refresh: True
+
+openvpn.config:
+  file.managed:
+    - name: /etc/openvpn/server.conf
+    - source: salt://openvpn/v1_0/files/server.conf.j2
+    - tempalte: jinja
+
+openvpn.service:
+  service.running:
+    - name: openvpn@server.service
+    - enable: True
+    - watch:
+      - openvpn.config

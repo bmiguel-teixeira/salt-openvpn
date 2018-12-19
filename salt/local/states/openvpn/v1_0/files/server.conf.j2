@@ -1,0 +1,59 @@
+# generic config
+
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+
+user nobody
+group nobody
+
+topology subnet
+server 10.8.0.0 255.255.255.0
+
+remote-cert-eku "TLS Web Client Authentication"
+tls-crypt /etc/openvpn/openvpn.tlsauth
+keepalive 10 120
+cipher AES-256-CBC
+
+port 1194
+proto udp
+dev tun
+ca /etc/openvpn/ca.crt
+cert /etc/openvpn/server.crt
+key /etc/openvpn/server.key 
+
+dh /etc/openvpn/dh2048.pem
+
+ifconfig-pool-persist ipp.txt
+persist-key
+persist-tun
+
+status openvpn-status.log
+verb 3
+
+explicit-exit-notify 1
+log-append /var/log/openvpn.log
+##############################################################
+
+;local a.b.c.d
+;proto tcp
+;dev tap
+;dev-node MyTap
+;server-bridge 10.8.0.4 255.255.255.0 10.8.0.50 10.8.0.100
+;server-bridge
+;push "route 192.168.10.0 255.255.255.0"
+;push "route 192.168.20.0 255.255.255.0"
+;client-config-dir ccd
+;route 192.168.40.128 255.255.255.248
+;client-config-dir ccd
+;route 10.9.0.0 255.255.255.252
+;learn-address ./script
+;client-to-client
+;duplicate-cn
+;compress lz4-v2
+;push "compress lz4-v2"
+;comp-lzo
+;max-clients 100
+;log         openvpn.log
+;log-append  openvpn.log
+;mute 20
